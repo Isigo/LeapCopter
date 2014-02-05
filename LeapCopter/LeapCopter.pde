@@ -110,6 +110,7 @@ void draw()
             copter.throttle=1;
             copter.elevator=0;
             copter.aileron=0;
+
            
           }
           if (stabilisation == 0)
@@ -152,12 +153,15 @@ void draw()
   if(mode == 1)
   {
   if(finger_detected == 0)
+  if(stabilisation == 0)
+  {
   {
     copter.elevator = copter.aileron = 0;
     if(copter.throttle > 0)
     {
       copter.throttle -= stepSize;
     }
+  }
   }
   }
   if(etat == 2)
@@ -205,6 +209,9 @@ void keyPressed() {
     switch(mode)
     {
       case 1:
+      copter.aileron=0;
+      copter.elevator=0;
+      copter.throttle=1;
       mode = 2;
       println("Mode clavier");
       break;
@@ -217,6 +224,8 @@ void keyPressed() {
   }
 if(etat !=2){
     if(mode !=1){
+      if(stabilisation != 1)
+      {
   if (key == 'a') {
     copter.throttle += stepSizekey;
     if(copter.throttle > 2)
@@ -237,7 +246,7 @@ if(etat !=2){
   if (key == 'A' || key == 'Z') {
     copter.throttle = 0;
     println("Copter throttle ="+copter.throttle);
-  }}
+  }}}
   }
   if (key == '0') {
     switch(etat)
@@ -259,7 +268,10 @@ if(etat !=2){
   if (key == '-') {
     precisionMultiplicator = precisionMultiplicator-5;
   } 
-
+if(etat !=2){
+    if(mode !=1){
+      if(stabilisation != 1)
+      {
   if (key == CODED) {
     if (keyCode == UP) {
       copter.elevator+=stepSizekey;
@@ -293,7 +305,7 @@ if(etat !=2){
       }
       println("Copter aileron ="+copter.aileron);
     
-    }
+    }}}}
   //}  
   }  //Fin contrôle clavier
   
