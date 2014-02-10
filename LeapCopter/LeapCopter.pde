@@ -1,8 +1,8 @@
 /**
 *Author : Théo Baron
 *Contributors : Raphaël Duchon-Doris
-*Date : 17/13/2013
-*Last update : 19/13/2013
+*Creation date : 17/13/2013
+*Last update : 10/02/2014
 *************************************************
 
 LeapCopter is a LeapMotion application made for controlling a quadcopter Hubsan X4 with the LeapMotion controller.
