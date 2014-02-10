@@ -1,5 +1,6 @@
 /**
-*Author : Isigo, Avalon Holograph
+*Author : Théo Baron
+*Contributors : Raphaël Duchon-Doris
 *Date : 17/13/2013
 *Last update : 19/13/2013
 *************************************************
