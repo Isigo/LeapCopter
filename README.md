@@ -15,6 +15,9 @@ Controls : 0 to switch control on/off, 1 to switch between Leap mode and keyboar
 Keyboard mode : A = throttle up, Z = throttle down. Right, left, up and down keys to control aileron and elevator.
 Leap mode : incline your hand left/right/backwards/forwards to make the quad move left/right/backwards/forward. Close your hand for self landing. Flips not included yet.
 
+Credits goes to PhracturedBlue, Shinyshez and andy_m for the arduino part.
+
+
 Enjoy !!!
 =========
 
