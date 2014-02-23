@@ -2,7 +2,7 @@
 *Author : Théo Baron
 *Contributors : Raphaël Duchon-Doris
 *Creation date : 17/13/2013
-*Last update : 10/02/2014
+*Last update : 22/02/2014
 *************************************************
 
 LeapCopter is a LeapMotion application made for controlling a quadcopter Hubsan X4 with the LeapMotion controller.
@@ -23,7 +23,8 @@ int precisionMultiplicator = 50;
 int stabilisation = 1;
 long timeToWait = 6;
 long lastTime;
-
+int finger_detected = 0;
+int hand_detected = 0;
 
 LeapMotion leap;
 
@@ -53,7 +54,6 @@ void draw()
   visual.update();
   copter.sendData();
   float stepSize = 0.01;  //CONTROL LEAP SANS SECURITE
-  int finger_detected = 0;
   for(Hand hand : leap.getHands())
   {
      hand.draw();
@@ -69,11 +69,12 @@ void draw()
     PVector sphere_position  = hand.getSpherePosition();
     float   sphere_radius    = hand.getSphereRadius();
      //copter.rudder=hand_yaw/50;
-    /*println(hand_position);
-    text(hand_position.x, 300, 200);
-    text(hand_position.y, 300, 250);
-    text(hand_position.z, 300, 300);
-    handX = hand_position.x/10;
+    println(hand_position);
+    text("Hand Position :", 660, 490);
+    text(hand_position.x, 660, 530);
+    text(hand_position.y, 660, 560);
+    text(hand_position.z, 660, 590);
+    /*handX = hand_position.x/10;
     handY = hand_position.y/10;*/
      
      for(Finger finger : hand.getFingers()){
@@ -101,12 +102,39 @@ void draw()
         break;
         
       }
+     } //fin for fingers
+      if(etat == 1)
+      {
+        if(mode == 1)
+        {
+          if(finger_detected == 1)
+          {
+          copter.throttle=(hand_position.y/-100)+5.00;
+          copter.elevator=(hand_roll/(-1*precisionMultiplicator))+0.15;
+          copter.aileron=hand_pitch/(1*precisionMultiplicator);
+          }
+      if(finger_detected == 0)
+      {
+      if(stabilisation == 0)
+      {
+        copter.elevator = copter.aileron = 0;
+      if(copter.throttle > 0)
+      {
+        copter.throttle -= stepSize;
+      }
+      }
+      }
+      }
+      } //Ceci est foireux mais ça marche!
+    
+  } //fin boucle hand
+      
       if(etat == 1)
       {
         if(mode == 1)
         {
           
-          if (stabilisation == 1);
+          if (stabilisation == 1)
           {
             copter.throttle=1;
             copter.elevator=0;
@@ -114,16 +142,25 @@ void draw()
 
            
           }
-          if (stabilisation == 0)
+          /*if (stabilisation == 0)
           {
           copter.throttle=(hand_position.y/-100)+5.00;
           copter.elevator=(hand_roll/(-1*precisionMultiplicator))+0.15;
           copter.aileron=hand_pitch/(1*precisionMultiplicator);
-          }
+          }*/
           
          
         }
+        if (mode == 2)
+        {
+          if (stabilisation == 1)
+          {
+            copter.throttle = 1;
+          }
+        }
+          
       }
+      
      
      if(copter.throttle > 2)
      {
@@ -148,14 +185,12 @@ void draw()
      if(copter.elevator < -0.5)
      {
        copter.elevator = -0.5;
-     }
-      }       
-  }
+     }    
+      
   if(mode == 1)
   {
-  if(finger_detected == 0)
+ /* if(finger_detected == 0){
   if(stabilisation == 0)
-  {
   {
     copter.elevator = copter.aileron = 0;
     if(copter.throttle > 0)
@@ -163,7 +198,7 @@ void draw()
       copter.throttle -= stepSize;
     }
   }
-  }
+  }*/
   }
   if(etat == 2)
     {
