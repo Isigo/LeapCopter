@@ -2,7 +2,7 @@
 *Author : Théo Baron
 *Contributors : Raphaël Duchon-Doris
 *Creation date : 17/13/2013
-*Last update : 22/02/2014
+*Last update : 23/02/2014
 *************************************************
 
 LeapCopter is a LeapMotion application made for controlling a quadcopter Hubsan X4 with the LeapMotion controller.
@@ -23,8 +23,7 @@ int precisionMultiplicator = 50;
 int stabilisation = 1;
 long timeToWait = 6;
 long lastTime;
-int finger_detected = 0;
-int hand_detected = 0;
+
 
 LeapMotion leap;
 
@@ -38,13 +37,13 @@ void setup()
   ellipseMode(CENTER);
   noStroke();
   frameRate(30);
-  PFont font = createFont("SansSerif", 30);      // font setup
+  PFont font = createFont("SansSerif", 30);    
   textFont(font);
   textAlign(CENTER, CENTER);
   copter = new CopterModel((PApplet)this);
   visual = new CopterVisualisation(copter, 0, 490, 100);
   lastTime = millis();
-  leap = new LeapMotion(this).withGestures("key_tap"); // le leap détecte la gesture key_tap seulement
+  leap = new LeapMotion(this).withGestures("key_tap, circle"); // leap detects key_tap and circle gestures, for a further use ( flips for circle gesture ? stabilisation or control on/off for key_tap gesture ?)
 }
 boolean newframe=false;
 void draw()
@@ -53,7 +52,8 @@ void draw()
   int fps = leap.getFrameRate();
   visual.update();
   copter.sendData();
-  float stepSize = 0.01;  //CONTROL LEAP SANS SECURITE
+  float stepSize = 0.01;  
+  int finger_detected = 0;
   for(Hand hand : leap.getHands())
   {
      hand.draw();
@@ -89,7 +89,7 @@ void draw()
       float   touch_distance    = finger.getTouchDistance();
       
       finger_detected = 1;
-      switch(touch_zone)
+      switch(touch_zone) //touch zone declaration
       {
         case -1:
         break;
@@ -102,43 +102,46 @@ void draw()
         break;
         
       }
-     } //fin for fingers
-      if(etat == 1)
+     } //end of for:fingers
+      if(etat == 1)//if control on
       {
-        if(mode == 1)
+        if(mode == 1)//if leap mode
         {
-          if(finger_detected == 1)
+          if(finger_detected == 1)// if hand opened
           {
           copter.throttle=(hand_position.y/-100)+5.00;
           copter.elevator=(hand_roll/(-1*precisionMultiplicator))+0.15;
           copter.aileron=hand_pitch/(1*precisionMultiplicator);
+          //copter.rudder=(hand_yaw/90)-0.15;
           }
-      if(finger_detected == 0)
+      if(finger_detected == 0) //self landing code part if you close your hand
       {
-      if(stabilisation == 0)
+      if(stabilisation == 0)/// if stabilisation == 0 you have no control
       {
         copter.elevator = copter.aileron = 0;
+        //self landing
       if(copter.throttle > 0)
       {
         copter.throttle -= stepSize;
       }
-      }
-      }
-      }
-      } //Ceci est foireux mais ça marche!
+      }//end of if(stabilisation)
+      }//end of if hand opened
+      }//end of if leap mode
+      }//end of if control on
     
-  } //fin boucle hand
+  } //end of for:hand
       
-      if(etat == 1)
+      if(etat == 1) //if control on
       {
-        if(mode == 1)
+        if(mode == 1) //leap control
         {
           
-          if (stabilisation == 1)
+          if (stabilisation == 1) //stabilisation code part, still have to tweak values, actually the copter stick to your ceiling if you put stabilisation on
           {
             copter.throttle=1;
             copter.elevator=0;
             copter.aileron=0;
+           // copter.rudder = 0;
 
            
           }
@@ -151,9 +154,9 @@ void draw()
           
          
         }
-        if (mode == 2)
+        if (mode == 2) //keyboard control
         {
-          if (stabilisation == 1)
+          if (stabilisation == 1)//if stabilisation on
           {
             copter.throttle = 1;
           }
@@ -161,7 +164,7 @@ void draw()
           
       }
       
-     
+     //maximum values
      if(copter.throttle > 2)
      {
        copter.throttle = 2;
@@ -186,8 +189,9 @@ void draw()
      {
        copter.elevator = -0.5;
      }    
-      
-  if(mode == 1)
+     
+
+  if(mode == 1)//if leap mode
   {
  /* if(finger_detected == 0){
   if(stabilisation == 0)
@@ -200,13 +204,14 @@ void draw()
   }
   }*/
   }
-  if(etat == 2)
+  if(etat == 2) //if control off
     {
       if(copter.throttle > 0)
       {
           copter.elevator = 0;
           copter.aileron = 0;
-          
+         // copter.rudder = 0;
+          //self landing timing
           if (millis() - lastTime > timeToWait)
           {
             copter.throttle -= stepSize;
@@ -216,17 +221,18 @@ void draw()
       }
      copter.elevator = 0;
      copter.aileron = 0;
+  //   copter.rudder = 0;
     }
 
-}//Fin du void draw()
-void mousePressed() {
+}//end of void draw()
+/*void mousePressed() {
   colour_pick=true;
-}
-
+}*/
+//beginning of the keyboard control code section
 void keyPressed() {
   float stepSize=0.01;
   float stepSizekey=0.06;
-  
+  //switch stabilisation on/off
   if (key == '2') {
     switch(stabilisation)
     {
@@ -241,6 +247,7 @@ void keyPressed() {
       break;
     }
   }
+  //switch keyboard mode on/off
   if (key == '1') {
     switch(mode)
     {
@@ -249,22 +256,23 @@ void keyPressed() {
       copter.elevator=0;
       copter.throttle=1;
       mode = 2;
-      println("Mode clavier");
+      println("Keyboard mode");
       break;
       
       case 2:
       mode = 1;
-      println("Mode Leap");
+      println("Leap mode");
       break;
     }
   }
-if(etat !=2){
-    if(mode !=1){
-      if(stabilisation != 1)
+  //had to use logic operator !, dunno why it doesn't work with ==
+if(etat !=2){//if control on
+    if(mode !=1){//if keyboard mode
+      if(stabilisation != 1)//if stabilisation off
       {
   if (key == 'a') {
     copter.throttle += stepSizekey;
-    if(copter.throttle > 2)
+    if(copter.throttle > 2)//maximum value
     {
       copter.throttle = 2;
     }
@@ -273,7 +281,7 @@ if(etat !=2){
   }
   if (key == 'z') {
     copter.throttle -= stepSizekey;
-    if (copter.throttle < 0)
+    if (copter.throttle < 0)//minimum value
     {
       copter.throttle = 0;
     }
@@ -282,31 +290,36 @@ if(etat !=2){
   if (key == 'A' || key == 'Z') {
     copter.throttle = 0;
     println("Copter throttle ="+copter.throttle);
-  }}}
   }
+}//end of if stab off
+}//end of if keyboard mode
+  }//end of if control on
+  
+  //switch control on/off
   if (key == '0') {
     switch(etat)
     {
       case 1:
       etat = 2;
-      println("Control désactivé");
+      println("Control activated");
       break;
       
       case 2:
       etat = 1;
-      println("Control activé");
+      println("Control desactivated");
       break;
     }
   }
+  //settings of precision
   if (key == '+') {
     precisionMultiplicator = precisionMultiplicator+5;
   }
   if (key == '-') {
     precisionMultiplicator = precisionMultiplicator-5;
   } 
-if(etat !=2){
-    if(mode !=1){
-      if(stabilisation != 1)
+if(etat !=2){//if control on
+    if(mode !=1){//if keyboard mode
+      if(stabilisation != 1)//if stab off
       {
   if (key == CODED) {
     if (keyCode == UP) {
@@ -341,12 +354,14 @@ if(etat !=2){
       }
       println("Copter aileron ="+copter.aileron);
     
-    }}}}
+    }
+  }
+}//end of if stab off
+}//end of if keyboard mode
   //}  
-  }  //Fin contrôle clavier
+  }  //end of if control on
   
 
   
   
-}
-
+} //end of void keyPressed function

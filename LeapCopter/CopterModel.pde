@@ -74,21 +74,21 @@ class CopterVisualisation {
       text("Stabilisation off",posx+h*4,posy);
     }
     if (mode == 1){
-      text("Mode Leap",posx+h*4, posy+35);
+      text("Leap mode",posx+h*4, posy+35);
     }
     else
     {
-      text("Mode clavier",posx+h*4, posy+35);
+      text("Keyboard mode",posx+h*4, posy+35);
     }
     if (etat == 1)
     {
-      text("Controle activé", posx+h*4, posy+70);
+      text("Control activated", posx+h*4, posy+70);
     }
     else
     {
-      text("Controle désactivé", posx+h*4, posy+70);
+      text("Control desactivated", posx+h*4, posy+70);
     }
-    text("Précision = ", posx+h*4-10, posy+105);
+    text("Precision = ", posx+h*4-10, posy+105);
     text(precisionMultiplicator, posx+h*4+90, posy+105);
     fill(0, 0, 255);
     smooth();
