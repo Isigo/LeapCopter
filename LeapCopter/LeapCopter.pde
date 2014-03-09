@@ -14,7 +14,6 @@ Contact : theo.lucaroni@gmail.com
 import de.voidplus.leapmotion.*;
 import processing.serial.*;
 
-boolean colour_pick=false, showVideo=false;
 CopterModel copter;
 CopterVisualisation visual;
 int etat = 2;
