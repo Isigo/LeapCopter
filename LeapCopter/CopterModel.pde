@@ -25,7 +25,7 @@ class CopterModel {
 
       byte[] data= {
         23, 
-        (byte) map(throttle, 0, 1, 0, 255), 
+        (byte)map(throttle, 0, 1, 0, 255), 
         (byte)map(rudder, 1, -1, 0, 255), 
         (byte)map(aileron, 1, -1, 0, 255), 
         (byte)map(elevator, -1, 1, 0, 255)
@@ -68,6 +68,11 @@ class CopterVisualisation {
     
     drawIndicator(posx+h/2, posy+h/2, h, copter.rudder, copter.throttle-1);
     drawIndicator(posx+4*h/2, posy+h/2, h, copter.aileron*2, copter.elevator*2);
+    if (rudder_enabled == 1) {
+      text("Rudder control enabled",posx+h*4,posy-35);
+    } else {
+      text("Rudder control disabled",posx+h*4,posy-35);
+    }
     if (stabilisation == 1) {
       text("Stabilisation on",posx+h*4,posy);
     } else {

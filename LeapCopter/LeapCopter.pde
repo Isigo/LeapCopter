@@ -2,7 +2,7 @@
 *Author : Théo Baron
 *Contributors : Raphaël Duchon-Doris
 *Creation date : 17/13/2013
-*Last update : 23/02/2014
+*Last update : 09/03/2014
 *************************************************
 
 LeapCopter is a LeapMotion application made for controlling a quadcopter Hubsan X4 with the LeapMotion controller.
@@ -21,6 +21,7 @@ int etat = 2;
 int mode = 1;
 int precisionMultiplicator = 50;
 int stabilisation = 1;
+int rudder_enabled = 0;
 long timeToWait = 6;
 long lastTime;
 
@@ -112,7 +113,14 @@ void draw()
           copter.throttle=(hand_position.y/-100)+5.00;
           copter.elevator=(hand_roll/(-1*precisionMultiplicator))+0.15;
           copter.aileron=hand_pitch/(1*precisionMultiplicator);
-          //copter.rudder=(hand_yaw/90)-0.15;
+          if(rudder_enabled == 1)
+            {
+              copter.rudder=(hand_yaw/90)-0.15;
+            }
+            else
+            {
+              copter.rudder = 0;
+            }
           }
       if(finger_detected == 0) //self landing code part if you close your hand
       {
@@ -136,21 +144,15 @@ void draw()
         if(mode == 1) //leap control
         {
           
-          if (stabilisation == 1) //stabilisation code part, still have to tweak values, actually the copter stick to your ceiling if you put stabilisation on
+          if (stabilisation == 1) //stabilisation code part
           {
-            copter.throttle=1;
+            copter.throttle=0.80;
             copter.elevator=0;
             copter.aileron=0;
-           // copter.rudder = 0;
+            copter.rudder = 0;
 
            
           }
-          /*if (stabilisation == 0)
-          {
-          copter.throttle=(hand_position.y/-100)+5.00;
-          copter.elevator=(hand_roll/(-1*precisionMultiplicator))+0.15;
-          copter.aileron=hand_pitch/(1*precisionMultiplicator);
-          }*/
           
          
         }
@@ -158,7 +160,10 @@ void draw()
         {
           if (stabilisation == 1)//if stabilisation on
           {
-            copter.throttle = 1;
+            copter.throttle = 0.80;
+            copter.elevator = 0;
+            copter.aileron = 0;
+            copter.rudder = 0;
           }
         }
           
@@ -188,12 +193,20 @@ void draw()
      if(copter.elevator < -0.5)
      {
        copter.elevator = -0.5;
-     }    
+     }
+     if(copter.rudder > 0.5)
+     {
+        copter.rudder = 0.5;
+     }
+     if(copter.rudder < -0.5)
+     {
+        copter.rudder = -0.5;
+     }   
      
 
   if(mode == 1)//if leap mode
   {
- /* if(finger_detected == 0){
+  if(finger_detected == 0){
   if(stabilisation == 0)
   {
     copter.elevator = copter.aileron = 0;
@@ -202,7 +215,7 @@ void draw()
       copter.throttle -= stepSize;
     }
   }
-  }*/
+  }
   }
   if(etat == 2) //if control off
     {
@@ -210,7 +223,7 @@ void draw()
       {
           copter.elevator = 0;
           copter.aileron = 0;
-         // copter.rudder = 0;
+          copter.rudder = 0;
           //self landing timing
           if (millis() - lastTime > timeToWait)
           {
@@ -221,17 +234,30 @@ void draw()
       }
      copter.elevator = 0;
      copter.aileron = 0;
-  //   copter.rudder = 0;
+     copter.rudder = 0;
     }
 
 }//end of void draw()
-/*void mousePressed() {
-  colour_pick=true;
-}*/
+
 //beginning of the keyboard control code section
 void keyPressed() {
   float stepSize=0.01;
   float stepSizekey=0.06;
+  //rudder control on/off
+  if (key == '3') {
+    switch(rudder_enabled)
+    {
+      case 0:
+      rudder_enabled = 1;
+      println("Rudder control enabled");
+      break;
+      
+      case 1:
+      rudder_enabled = 0;
+      println("Rudder control disabled");
+      break;
+    }
+  }
   //switch stabilisation on/off
   if (key == '2') {
     switch(stabilisation)
@@ -358,10 +384,5 @@ if(etat !=2){//if control on
   }
 }//end of if stab off
 }//end of if keyboard mode
-  //}  
-  }  //end of if control on
-  
-
-  
-  
+}  //end of if control on 
 } //end of void keyPressed function
