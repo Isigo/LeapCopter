@@ -68,6 +68,11 @@ class CopterVisualisation {
     
     drawIndicator(posx+h/2, posy+h/2, h, copter.rudder, copter.throttle-1);
     drawIndicator(posx+4*h/2, posy+h/2, h, copter.aileron*2, copter.elevator*2);
+    if (throttle_lock == 0) {
+      text("Throttle unlocked",posx+h*4,posy-70);
+    } else {
+      text("Throttle locked",posx+h*4,posy-70);
+    }
     if (rudder_enabled == 1) {
       text("Rudder control enabled",posx+h*4,posy-35);
     } else {
