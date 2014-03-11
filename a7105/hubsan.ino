@@ -253,8 +253,8 @@ static u16 hubsan_cb()
     case DATA_3:
     case DATA_4:
     case DATA_5:
-        // surpress the throttle for the first 1000 loops. The motors will not start if this does not happen
-        if (cycles < 1000) {
+        // surpress the throttle for the first 125 loops. The motors will not start if this does not happen
+        if (cycles < 125) {
             throttle = 0;
             cycles++;
         }

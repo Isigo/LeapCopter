@@ -26,8 +26,8 @@ void setup() {
   A7105_WriteReg(A7105_0F_CHANNEL, 0x32);
   Serial.println("Initialisation Complete");
 }
-  int loopcnt = 0;
-  int boundcnt = 0;
+  //int loopcnt = 0;
+  //int boundcnt = 0;
 void loop() {
   
   int startTime, waitTime, hubsanWait, finishTime;
@@ -38,7 +38,6 @@ void loop() {
           throttle = rudder = aileron = elevator = 0;
       } else {
       throttle=Serial.read();
-      //rudder=Serial.read()*1.2;
       rudder=Serial.read();
       aileron=Serial.read();
       elevator=Serial.read();
@@ -49,10 +48,10 @@ void loop() {
     Serial.print("State: ");
     Serial.println(state);
     //rudder = aileron = elevator = 0x7F; // midpoints?
-    if (boundcnt >= 80 && throttle < 20) throttle += 1;
+    //if (boundcnt >= 80 && throttle < 20) throttle += 1;
     //if (loopcnt > 280) throttle = 0; // end test
-    loopcnt += 1;
-    boundcnt = state >= 8 ? boundcnt + 1 : 0;
+    //loopcnt += 1;
+    //boundcnt = state >= 8 ? boundcnt + 1 : 0;
     //Serial.println("Throttle:");
     //Serial.println(throttle);
     hubsanWait = hubsan_cb();
