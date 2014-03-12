@@ -2,7 +2,7 @@
 *Author : Théo Baron
 *Contributors : Raphaël Duchon-Doris
 *Creation date : 17/13/2013
-*Last update : 11/03/2014
+*Last update : 12/03/2014
 *************************************************
 
 LeapCopter is a LeapMotion application made for controlling a quadcopter Hubsan X4 with the LeapMotion controller.
@@ -21,9 +21,10 @@ int mode = 1;
 int precisionMultiplicator = 50;
 int stabilisation = 1;
 int rudder_enabled = 0;
-long timeToWait = 6;
+long timeToWait = 10;
 long lastTime;
 int throttle_lock = 0;
+float stabilisation_throttle = 0.70;
 
 LeapMotion leap;
 
@@ -133,6 +134,11 @@ void draw()
       if(copter.throttle > 0)
       {
         copter.throttle -= stepSize;
+        if (millis() - lastTime > timeToWait)
+          {
+            copter.throttle -= stepSize;
+            lastTime = millis();
+          }
       }
       }//end of if(stabilisation)
       }//end of if hand opened
@@ -148,7 +154,7 @@ void draw()
           
           if (stabilisation == 1) //stabilisation code part
           {
-            copter.throttle=0.80;
+            copter.throttle=stabilisation_throttle;
             copter.elevator=0;
             copter.aileron=0;
             copter.rudder = 0;
@@ -162,7 +168,7 @@ void draw()
         {
           if (stabilisation == 1)//if stabilisation on
           {
-            copter.throttle = 0.80;
+            copter.throttle = stabilisation_throttle;
             copter.elevator = 0;
             copter.aileron = 0;
             copter.rudder = 0;
@@ -215,6 +221,11 @@ void draw()
     if(copter.throttle > 0)
     {
       copter.throttle -= stepSize;
+      if (millis() - lastTime > timeToWait)
+          {
+            copter.throttle -= stepSize;
+            lastTime = millis();
+          }
     }
   }
   }
