@@ -69,37 +69,37 @@ class CopterVisualisation {
     drawIndicator(posx+h/2, posy+h/2, h, copter.rudder, copter.throttle-1);
     drawIndicator(posx+4*h/2, posy+h/2, h, copter.aileron*2, copter.elevator*2);
     if (throttle_lock == 0) {
-      text("Throttle unlocked",posx+h*4,posy-70);
+      text("Throttle : unlocked",posx+h*3,posy+05);
     } else {
-      text("Throttle locked",posx+h*4,posy-70);
+      text("Throttle : locked",posx+h*3,posy+05);
     }
     if (rudder_enabled == 1) {
-      text("Rudder control enabled",posx+h*4,posy-35);
+      text("Rudder control : enabled",posx+h*3,posy+25);
     } else {
-      text("Rudder control disabled",posx+h*4,posy-35);
+      text("Rudder control : disabled",posx+h*3,posy+25);
     }
     if (stabilisation == 1) {
-      text("Stabilisation on",posx+h*4,posy);
+      text("Stabilisation : enabled",posx+h*3,posy+45);
     } else {
-      text("Stabilisation off",posx+h*4,posy);
+      text("Stabilisation : disabled",posx+h*3,posy+45);
     }
     if (mode == 1){
-      text("Leap mode",posx+h*4, posy+35);
+      text("Leap mode",posx+h*3, posy+65);
     }
     else
     {
-      text("Keyboard mode",posx+h*4, posy+35);
+      text("Keyboard mode",posx+h*3, posy+65);
     }
     if (etat == 1)
     {
-      text("Control activated", posx+h*4, posy+70);
+      text("Control : activated", posx+h*3, posy+85);
     }
     else
     {
-      text("Control desactivated", posx+h*4, posy+70);
+      text("Control : desactivated", posx+h*3, posy+85);
     }
-    text("Precision = ", posx+h*4-10, posy+105);
-    text(precisionMultiplicator, posx+h*4+90, posy+105);
+    text("Precision = ", posx+h*3, posy+105);
+    text(precisionMultiplicator, posx+h*3+100, posy+105);
     fill(0, 0, 255);
     smooth();
 

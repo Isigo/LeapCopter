@@ -19,8 +19,6 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Initialising...");
   A7105_Setup();
-  int loopcnt = 0;
-  int boundcnt = 0;
   initialize();
   channel = 0x32;
   A7105_WriteReg(A7105_0F_CHANNEL, 0x32);

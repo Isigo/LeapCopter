@@ -1,8 +1,7 @@
 /**
-*Author : Théo Baron
-*Contributors : Raphaël Duchon-Doris
-*Creation date : 17/13/2013
-*Last update : 12/03/2014
+*Author : Théo Baron, with the great help of Raphaël Duchon-Doris
+*Creation date : 17/12/2013
+*Last update : 14/03/2014
 *************************************************
 
 LeapCopter is a LeapMotion application made for controlling a quadcopter Hubsan X4 with the LeapMotion controller.
@@ -38,9 +37,9 @@ void setup()
   ellipseMode(CENTER);
   noStroke();
   frameRate(30);
-  PFont font = createFont("SansSerif", 30);    
+  PFont font = createFont("SansSerif", 20);    
   textFont(font);
-  textAlign(CENTER, CENTER);
+  textAlign(LEFT);
   copter = new CopterModel((PApplet)this);
   visual = new CopterVisualisation(copter, 0, 490, 100);
   lastTime = millis();
