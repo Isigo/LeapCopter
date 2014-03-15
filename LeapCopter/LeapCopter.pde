@@ -23,7 +23,7 @@ int rudder_enabled = 0;
 long timeToWait = 10;
 long lastTime;
 int throttle_lock = 0;
-float stabilisation_throttle = 0.70;
+float stabilisation_throttle = 0.65;
 
 LeapMotion leap;
 
@@ -69,7 +69,6 @@ void draw()
     PVector sphere_position  = hand.getSpherePosition();
     float   sphere_radius    = hand.getSphereRadius();
      //copter.rudder=hand_yaw/50;
-    println(hand_position);
     text("Hand Position :", 660, 490);
     text(hand_position.x, 660, 530);
     text(hand_position.y, 660, 560);
@@ -111,7 +110,7 @@ void draw()
           {
             if (throttle_lock == 0)
             {
-          copter.throttle=(hand_position.y/-100)+5.00;
+          copter.throttle=(hand_position.y/-200)+2.90; //Changed for less sensitive control
             }
           copter.elevator=(hand_roll/(-1*precisionMultiplicator))+0.15;
           copter.aileron=hand_pitch/(1*precisionMultiplicator);
@@ -250,6 +249,58 @@ void draw()
     }
 
 }//end of void draw()
+
+  void leapOnKeyTapGesture(KeyTapGesture g){ //KeyTap Gesture Function
+  int       id               = g.getId();
+  Finger    finger           = g.getFinger();
+  PVector   position         = g.getPosition();
+  PVector   direction        = g.getDirection();
+  long      duration         = g.getDuration();
+  float     duration_seconds = g.getDurationInSeconds();
+  
+  println("KeyTapGesture: "+id);
+  if(etat == 1)//if control activated
+  {
+    if(mode == 1)//if mode Leap
+    {
+  switch(rudder_enabled){ //enables/disables rudder with keyTap
+
+  case 0:
+  rudder_enabled = 1;
+  println("Rudder control disabled");
+  break;
+  
+  case 1:
+  rudder_enabled = 0;
+  println("Rudder control disabled");
+  break;
+ 
+  }//end if etat
+  }//end if mode
+  }//end of switch
+ }//end of keytap
+ 
+  
+      void leapOnCircleGesture(CircleGesture g, int state){ //A function for the circle gesture, may be used to "flip" later on
+  int       id               = g.getId();
+  Finger    finger           = g.getFinger();
+  PVector   position_center  = g.getCenter();
+  float     radius           = g.getRadius();
+  float     progress         = g.getProgress();
+  long      duration         = g.getDuration();
+  float     duration_seconds = g.getDurationInSeconds();
+
+  switch(state){
+    case 1: // Start
+      break;
+    case 2: // Update
+      break;
+    case 3: // Stop
+      println("CircleGesture: "+id);
+      break;
+      
+  } //end of switch state
+    } //end of circle gesture
 
 //beginning of the keyboard control code section
 void keyPressed() {

@@ -96,7 +96,7 @@ class CopterVisualisation {
     }
     else
     {
-      text("Control : desactivated", posx+h*3, posy+85);
+      text("Control : inactive", posx+h*3, posy+85);
     }
     text("Precision = ", posx+h*3, posy+105);
     text(precisionMultiplicator, posx+h*3+100, posy+105);
