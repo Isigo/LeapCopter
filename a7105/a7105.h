@@ -2,11 +2,17 @@
 #define _IFACE_A7105_H_
 
 
-
+#define RED_LED 52
+#define BLUE_LED 53
 #define CS_PIN 10
+#define RED_ON() digitalWrite(RED_LED, HIGH);
+#define RED_OFF() digitalWrite(RED_LED, LOW);
+#define BLUE_ON() digitalWrite(BLUE_LED, HIGH);
+#define BLUE_OFF() digitalWrite(BLUE_LED, LOW);
 #define CS_HI() digitalWrite(CS_PIN, HIGH);
 #define CS_LO() digitalWrite(CS_PIN, LOW);
 
+bool verbose;
 u8 packet[16];
 u8 testpacket[16];
 u8 receivedpacket[16];
@@ -14,7 +20,8 @@ u8 channel;
 unsigned long sessionid;
 const unsigned long txid = 0xdb042679;
 u8 state;
-
+int startTime, waitTime, hubsanWait, finishTime;
+  
 
 // strobe commands. These are used to set the transceiver mode
 enum A7105_State {

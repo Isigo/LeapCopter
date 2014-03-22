@@ -88,7 +88,7 @@ int hubsan_init()
     A7105_Strobe(A7105_STANDBY);
     
     if (A7105_calibrate_IF() || A7105_calibrate_VCB(0x00) || A7105_calibrate_VCB(0xA0)) {
-        Serial.println("Error: calibration failed");
+        if (verbose) Serial.println("Error: calibration failed");
         return 0;
     }
 
@@ -96,7 +96,7 @@ int hubsan_init()
     //A7105_WriteReg(0x25, 0x08);
 
     A7105_SetPower(TXPOWER_150mW);
-    Serial.println("Power: Set 150mW");
+    if (verbose) Serial.println("Power: Set 150mW");
 
     A7105_Strobe(A7105_STANDBY);
     return 1;
@@ -156,7 +156,7 @@ static void hubsan_build_packet()
     memset(packet, 0, 16);
     //20 00 00 00 80 00 7d 00 84 02 64 db 04 26 79 7b
     packet[0] = 0x20;
-    //packet[2] = 0xdd; // test value to try to get the motors to start
+    //packet[2] = 0xAA; // test value to try to get the motors to start
     packet[2] = throttle;
     packet[4] = 0xff - rudder; // Rudder is reversed
     packet[6] = 0xff - elevator; // Elevator is reversed
@@ -174,18 +174,20 @@ static void hubsan_build_packet()
     // V2 (X4 with LEDs)
     packet[9] = 0x0e; // default: flips on, LEDs on.
     packet[10] = 0x19; 
+    
     update_crc();
 }
 
 static u16 hubsan_cb()
 {
+    RED_ON()
     int i, j;
     switch(state) {
     case BIND_1:
     case BIND_3:
     case BIND_5:
     case BIND_7:
-        Serial.println("Clause 1");
+        //Serial.println("Clause 1");
         hubsan_build_bind_packet(state == BIND_7 ? 9 : (state == BIND_5 ? 1 : state + 1 - BIND_1));
         A7105_Strobe(A7105_STANDBY);
         A7105_WriteData(packet, 16, channel);
@@ -195,14 +197,14 @@ static u16 hubsan_cb()
     case BIND_3 | WAIT_WRITE:
     case BIND_5 | WAIT_WRITE:
     case BIND_7 | WAIT_WRITE:
-        Serial.println("Clause 2");
+        //Serial.println("Clause 2");
         //wait for completion
         for(i = 0; i< 20; i++) {
           if(! (A7105_ReadReg(A7105_00_MODE) & 0x01))
             break;
         }
         if (i == 20)
-            Serial.println("Failed to complete write\n");
+            if (verbose) Serial.println("Failed to complete write\n");
         A7105_Strobe(A7105_RX);
         state &= ~WAIT_WRITE;
         state++;
@@ -210,12 +212,11 @@ static u16 hubsan_cb()
     case BIND_2:
     case BIND_4:
     case BIND_6:
-        Serial.println("Clause 3");
+        //Serial.println("Clause 3");
         
-        // flipped 'not' here, I think it was wrong
         if(A7105_ReadReg(A7105_00_MODE) & 0x01) {
             state = BIND_1; //
-            Serial.println("Restart");
+            if (verbose) Serial.println("Restart");
             return 4500; //No signal, restart binding procedure.  12msec elapsed since last write
         } 
 
@@ -228,7 +229,7 @@ static u16 hubsan_cb()
         }
         return 500;  //8msec elapsed time since last write;
     case BIND_8:
-        Serial.println("Clause 4");
+        //Serial.println("Clause 4");
         if(A7105_ReadReg(A7105_00_MODE) & 0x01) {
             state = BIND_7;
             return 15000; //22.5msec elapsed since last write
@@ -237,6 +238,8 @@ static u16 hubsan_cb()
        // test to see what is being received
        printpacket(packet);
         if(packet[1] == 9) {
+            RED_OFF();
+            BLUE_ON();
             state = DATA_1; // shift to data mode
             A7105_WriteReg(A7105_1F_CODE_I, 0x0F); // enable CRC
             PROTOCOL_SetBindState(0);
@@ -246,7 +249,7 @@ static u16 hubsan_cb()
             return 15000; //22.5 msec elapsed since last write
         }
     case DATA_1:
-        Serial.println("Clause 5");
+        //Serial.println("Clause 5");
         //Keep transmit power in sync
         A7105_SetPower(TXPOWER_150mW);
     case DATA_2:
@@ -255,10 +258,16 @@ static u16 hubsan_cb()
     case DATA_5:
         // surpress the throttle for the first 125 loops. The motors will not start if this does not happen
         if (cycles < 125) {
-            throttle = 0;
+            if (verbose) Serial.println("Throttle surpressed");
+            throttle = 0; 
             cycles++;
         }
-        Serial.println("Clause 6");
+        else if (cycles == 125) {
+          throttle = 15;
+          cycles++;
+        }
+          
+        //Serial.println("Clause 6");
         hubsan_build_packet();
         A7105_WriteData(packet, 16, state == DATA_5 ? channel + 0x23 : channel);
         if (state == DATA_5)
@@ -274,14 +283,14 @@ static void initialize() {
     while(1) {
         A7105_Reset();
         if (hubsan_init()) {
-          Serial.println("Hubsan_init successful.");
+          if (verbose) Serial.println("Hubsan_init successful.");
           break;
         }
         else
-           Serial.println("Hubsan_init failed.");
+           if (verbose) Serial.println("Hubsan_init failed.");
     }
     sessionid = rand();
-    channel = allowed_ch[rand() % sizeof(allowed_ch)]; //0x28; 
+    channel = allowed_ch[rand() % no_allowed_channels];
     state = BIND_1;
 }
 

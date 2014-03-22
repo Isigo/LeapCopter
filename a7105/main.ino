@@ -15,25 +15,34 @@ Make sure thet output on arduino pins is no more than 3.3V, otherwise the chip w
 ********************************************************
 */
 void setup() {
-  
+  verbose = false;
+  pinMode(RED_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
+  RED_OFF();
+  BLUE_OFF();
   Serial.begin(115200);
+  Serial.flush();
   Serial.println("Initialising...");
+
+  // SPI initialisation and mode configuration
   A7105_Setup();
+  
+  // calibrate the chip and set the RF frequency, timing, transmission modes, session ID and channel
   initialize();
-  channel = 0x32;
-  A7105_WriteReg(A7105_0F_CHANNEL, 0x32);
+  
+  rudder = aileron = elevator = 0x7F; 
+  throttle = 0x00;
+  
   Serial.println("Initialisation Complete");
 }
-  //int loopcnt = 0;
-  //int boundcnt = 0;
-void loop() {
-  
-  int startTime, waitTime, hubsanWait, finishTime;
-  startTime = micros();
-  while (1) {
+
+void loop() {  
+    // start the timer for the first packet transmission
+    startTime = micros();
+   while (1) {
     if (Serial.available()>4) {
       if (Serial.read()!=23) {
-          throttle = rudder = aileron = elevator = 0;
+          rudder = aileron = elevator = 0x7F;
       } else {
       throttle=Serial.read();
       rudder=Serial.read();
@@ -42,27 +51,25 @@ void loop() {
       }
     }
     
-      //if (state!=0 && state!=1 & state!=128) 
-    Serial.print("State: ");
-    Serial.println(state);
-    //rudder = aileron = elevator = 0x7F; // midpoints?
-    //if (boundcnt >= 80 && throttle < 20) throttle += 1;
-    //if (loopcnt > 280) throttle = 0; // end test
-    //loopcnt += 1;
-    //boundcnt = state >= 8 ? boundcnt + 1 : 0;
-    //Serial.println("Throttle:");
-    //Serial.println(throttle);
+    // print information about which state the RF dialogue os currently in
+    //Serial.print("State: ");
+    //Serial.println(state);
+    
+    // perform the correct RF transaction
     hubsanWait = hubsan_cb();
+    
+    // stop timer for this packet
     finishTime = micros();
+    
+    // calculate how long to wait before transmitting the next packet
     waitTime = hubsanWait - (micros() - startTime);
-    //Serial.print("hubsanWait: " ); Serial.println(hubsanWait);
-    //Serial.print("waitTime: " ); Serial.println(waitTime);
-    //Serial.println(hubsanWait);
+    
+    // wait that long
     delayMicroseconds(waitTime);
+    
+    // start the timer again
     startTime = micros();
   }
-  
-  
   
   //Serial.println(A7105_ReadReg(0x00)); 
   //A7105_shoutchannel();
