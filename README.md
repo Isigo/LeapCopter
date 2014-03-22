@@ -17,6 +17,9 @@ Keyboard mode : A = throttle up, Z = throttle down. Right, left, up and down key
 
 Leap mode : incline your hand left/right/backwards/forwards to make the quad move left/right/backwards/forward. Turn your hand left/right to make the quad yaw left/right. Close your hand for self landing. Flips not included yet.
 
+Gestures : KeyTapGesture (just lower your finger as if you were tapping on the keyboard and put it back to starting position) allows you to switch rudder control on/off (just like "3").
+Circle gesture is included in the code but doesn't do anything as of yet.
+
 Credits goes to PhracturedBlue, Shinyshez and andy_m for the arduino part.
 
 
