@@ -5,21 +5,33 @@ Pin setup :
 gio1 chip / arduino miso
 BOTH ground chip / ground arduino
 vdd chip / 3.3V arduino
-sdio chip / one end of a 10k resistor
+sdio chip / one end of a 10-13k resistor
 the other end of the resistor / mosi arduino
 sck chip / sck arduino
 scs chip / pin 10 arduino
 
+If you want to use the additional reset button :
 
-Make sure thet output on arduino pins is no more than 3.3V, otherwise the chip would be damaged.
+5V to button, button to 10K resistor, resistor to ground, then same pin to pin 2. Add a resistor between pin 12 and RESET pin.
+
+Make sure that output on arduino pins is no more than 3.3V, otherwise the chip would be damaged.
 ********************************************************
 */
+
+
+int buttonState = 0;
+int resetPin = 12;
+int buttonPin = 2;
+int i;
 void setup() {
+  digitalWrite(resetPin, HIGH);
+  pinMode(resetPin, OUTPUT);
+  pinMode(buttonPin, INPUT);
   verbose = false;
   pinMode(RED_LED, OUTPUT);
-  pinMode(BLUE_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
   RED_OFF();
-  BLUE_OFF();
+  GREEN_OFF();
   Serial.begin(115200);
   Serial.flush();
   Serial.println("Initialising...");
@@ -37,6 +49,7 @@ void setup() {
 }
 
 void loop() {  
+
     // start the timer for the first packet transmission
     startTime = micros();
    while (1) {
@@ -51,7 +64,7 @@ void loop() {
       }
     }
     
-    // print information about which state the RF dialogue os currently in
+    // print information about which state the RF dialogue is currently in
     //Serial.print("State: ");
     //Serial.println(state);
     
@@ -69,6 +82,13 @@ void loop() {
     
     // start the timer again
     startTime = micros();
+    
+    // reset the card if button is pressed
+    buttonState = digitalRead(buttonPin);
+    if (buttonState == HIGH) {
+      digitalWrite(resetPin, LOW);
+      }
+     
   }
   
   //Serial.println(A7105_ReadReg(0x00)); 
