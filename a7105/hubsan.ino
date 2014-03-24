@@ -239,7 +239,7 @@ static u16 hubsan_cb()
        printpacket(packet);
         if(packet[1] == 9) {
             RED_OFF();
-            GREEN_ON();
+            BLUE_ON();
             state = DATA_1; // shift to data mode
             A7105_WriteReg(A7105_1F_CODE_I, 0x0F); // enable CRC
             PROTOCOL_SetBindState(0);
@@ -263,7 +263,7 @@ static u16 hubsan_cb()
             cycles++;
         }
         else if (cycles == 125) {
-          throttle = 12;
+          throttle = 15;
           cycles++;
         }
           
@@ -293,4 +293,6 @@ static void initialize() {
     channel = allowed_ch[rand() % no_allowed_channels];
     state = BIND_1;
 }
+
+
 

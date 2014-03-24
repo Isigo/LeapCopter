@@ -3,12 +3,12 @@
 
 
 #define RED_LED 52
-#define GREEN_LED 53
+#define BLUE_LED 53
 #define CS_PIN 10
 #define RED_ON() digitalWrite(RED_LED, HIGH);
 #define RED_OFF() digitalWrite(RED_LED, LOW);
-#define GREEN_ON() digitalWrite(GREEN_LED, HIGH);
-#define GREEN_OFF() digitalWrite(GREEN_LED, LOW);
+#define BLUE_ON() digitalWrite(BLUE_LED, HIGH);
+#define BLUE_OFF() digitalWrite(BLUE_LED, LOW);
 #define CS_HI() digitalWrite(CS_PIN, HIGH);
 #define CS_LO() digitalWrite(CS_PIN, LOW);
 
@@ -127,6 +127,5 @@ void A7105_shoutchannel();
 void A7105_scanchannels(const u8 channels[]);
 void A7105_sniffchannel(u8 _channel);
 int A7105_sniffchannel();
-
 
 #endif
