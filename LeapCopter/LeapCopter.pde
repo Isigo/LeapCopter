@@ -87,6 +87,7 @@ void draw()
       int     touch_zone        = finger.getTouchZone();
       float   touch_distance    = finger.getTouchDistance();
       
+      //println("Finger id: "+finger_id);
       finger_detected = 1;
       switch(touch_zone) //touch zone declaration
       {
@@ -131,13 +132,23 @@ void draw()
         //self landing
       if(copter.throttle > 0)
       {
-        copter.throttle -= stepSize;
+        if(copter.throttle < 0.5)
+        {
         if (millis() - lastTime > timeToWait)
           {
-            copter.throttle -= stepSize;
+            copter.throttle -= (stepSize);
             lastTime = millis();
           }
-      }
+        }
+        if(copter.throttle >= 0.5 && copter.throttle <= 1)// when copter.throttle = [0.5 ; 1]
+        {
+        if (millis() - lastTime > timeToWait)
+          {
+            copter.throttle -= (stepSize*0.5);
+            lastTime = millis();
+          }
+        }
+      }// end of self-landing condition
       }//end of if(stabilisation)
       }//end of if hand opened
       }//end of if leap mode
@@ -216,33 +227,54 @@ void draw()
   if(stabilisation == 0)
   {
     copter.elevator = copter.aileron = 0;
-    if(copter.throttle > 0)
-    {
-      copter.throttle -= stepSize;
-      if (millis() - lastTime > timeToWait)
+    
+      if(copter.throttle > 0)// start descent when no hand
+      {
+        if(copter.throttle < 0.5)
+        {
+        if (millis() - lastTime > timeToWait)
           {
-            copter.throttle -= stepSize;
+            copter.throttle -= (stepSize);
             lastTime = millis();
           }
-    }
+        }
+        if(copter.throttle >= 0.5 && copter.throttle <= 1)
+        {
+        if (millis() - lastTime > timeToWait)
+          {
+            copter.throttle -= (stepSize*0.5);
+            lastTime = millis();
+          }
+        }
+      }// end of descend condition
   }
   }
   }
   if(etat == 2) //if control off
     {
-      if(copter.throttle > 0)
-      {
           copter.elevator = 0;
           copter.aileron = 0;
           copter.rudder = 0;
           //self landing timing
-          if (millis() - lastTime > timeToWait)
+      if(copter.throttle > 0)
+      {
+        if(copter.throttle < 0.5)
+        {
+        if (millis() - lastTime > timeToWait)
           {
             copter.throttle -= stepSize;
             lastTime = millis();
           }
-          
-      }
+        }
+        if(copter.throttle >= 0.5 && copter.throttle <= 1)// when copter.throttle = [0.5 ; 1]
+        {
+        if (millis() - lastTime > timeToWait)
+          {
+            copter.throttle -= (stepSize*0.5);
+            lastTime = millis();
+          }
+        }
+      }// end of self-landing condition
      copter.elevator = 0;
      copter.aileron = 0;
      copter.rudder = 0;
@@ -258,7 +290,7 @@ void draw()
   long      duration         = g.getDuration();
   float     duration_seconds = g.getDurationInSeconds();
   
-  println("KeyTapGesture: "+id);
+
   if(etat == 1)//if control activated
   {
     if(mode == 1)//if mode Leap
