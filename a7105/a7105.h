@@ -3,12 +3,12 @@
 
 
 #define RED_LED 52
-#define BLUE_LED 53
+#define GREEN_LED 53
 #define CS_PIN 10
 #define RED_ON() digitalWrite(RED_LED, HIGH);
 #define RED_OFF() digitalWrite(RED_LED, LOW);
-#define BLUE_ON() digitalWrite(BLUE_LED, HIGH);
-#define BLUE_OFF() digitalWrite(BLUE_LED, LOW);
+#define GREEN_ON() digitalWrite(GREEN_LED, HIGH);
+#define GREEN_OFF() digitalWrite(GREEN_LED, LOW);
 #define CS_HI() digitalWrite(CS_PIN, HIGH);
 #define CS_LO() digitalWrite(CS_PIN, LOW);
 
@@ -35,7 +35,7 @@ enum A7105_State {
     A7105_RST_RDPTR = 0xF0,
 };
 
-// register addresses
+// register addresse
 enum {
     A7105_00_MODE         = 0x00,
     A7105_01_MODE_CONTROL = 0x01,
