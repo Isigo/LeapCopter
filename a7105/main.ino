@@ -34,7 +34,7 @@ void setup() {
   GREEN_OFF();
   Serial.begin(115200);
   Serial.flush();
-  Serial.println("Initialising...");
+  if (verbose) Serial.println("Initialising...");
 
   // SPI initialisation and mode configuration
   A7105_Setup();
@@ -53,7 +53,7 @@ void setup() {
   rudder = aileron = elevator = 0x7F; 
   throttle = 0x00;
   
-  Serial.println("Initialisation Complete");
+  if(verbose) Serial.println("Initialisation Complete");
 }
 
 void loop() {  
