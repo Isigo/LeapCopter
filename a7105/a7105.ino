@@ -417,6 +417,16 @@ void A7105_sniffchannel(u8 _channel) {
       }
 }
 
+//function to read chip "ID" register
+void A7105_ReadChipID(uint8_t chipID[]) {
+CS_LO();
+SPI.transfer(0x46); // 0x40 | 0x06
+for (int i = 0; i < 4; ++i) {
+chipID[i] = SPI.transfer(0);
+}
+CS_HI();
+}
+
 // function to sniff a list of channels and see what is being broadcast on them
 // attempts sniffing 20 times on each channel before looping, print any results to serial
 void A7105_scanchannels(const u8 channels[]) {

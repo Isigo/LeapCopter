@@ -126,6 +126,7 @@ void eavesdrop(u32 sess_id, u8 sess_channel);
 void A7105_shoutchannel();
 void A7105_scanchannels(const u8 channels[]);
 void A7105_sniffchannel(u8 _channel);
+void A7105_ReadChipID(uint8_t chipID[]);
 int A7105_sniffchannel();
 
 #endif

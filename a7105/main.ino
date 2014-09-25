@@ -38,7 +38,15 @@ void setup() {
 
   // SPI initialisation and mode configuration
   A7105_Setup();
-  
+  delay(2000);  // gives two seconds to open serial monitor to see chip id
+  uint8_t chipID[4];
+  A7105_ReadChipID(chipID);
+  Serial.print("Chip ID: ");
+  for (int i = 0; i < 4; ++i) {
+    Serial.print(chipID[i]);
+    Serial.print("\t");
+  }
+  Serial.println();
   // calibrate the chip and set the RF frequency, timing, transmission modes, session ID and channel
   initialize();
   
