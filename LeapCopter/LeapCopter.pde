@@ -100,9 +100,11 @@ void draw()
         
         case 0:
         hand.draw();
+        rudder_enabled = 0;
         break;
         
         case 1:
+        rudder_enabled = 1;          
         break;
         
       }
