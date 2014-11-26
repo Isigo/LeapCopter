@@ -22,6 +22,18 @@ Circle gesture is included in the code but doesn't do anything as of yet.
 
 Credits goes to PhracturedBlue, Shinyshez and andy_m for the arduino part.
 
+=========================== How to make it work for any 5v Arduino board! ============================
+I managed to get it working of 5v arduino boards, with the contribution of Matias Szarfer, using a simple resistor divider system.
+Here are the wirings :
+
+10K-11K resistor between SCK of board and sck of A7105. 
+A7105's SCK to 20K-22k resistor, other end of this resistor to GND.
+Same between MOSI and sdio of A7015, and between MISO and  gio1 of A7105, and between pin 10 of board and scs of A7105. 
+Don't forget to put the 20K-22K resistor between sdio and GND, gio1 and GND, pin 10 and GND. 
+If it's not clear for you, don't risk to burn your board and e-mail me.
+
+You can contact me at isigo@weloveminitel.eu for any type of question, I will be glad to answer.
+
 
 Enjoy !!!
 =========
