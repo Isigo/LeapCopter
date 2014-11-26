@@ -1,5 +1,5 @@
 /**
-*Author : Théo Baron, with the great help of Raphaël Duchon-Doris
+*Authors : Théo Baron, Raphaël Duchon-Doris
 *Creation date : 17/12/2013
 *Last update : 14/03/2014
 *************************************************
@@ -20,10 +20,15 @@ int mode = 1;
 int precisionMultiplicator = 50;
 int stabilisation = 1;
 int rudder_enabled = 0;
+/*int circle_gesture_flip = 0;
+int flips_enabled = 0;
+int circle_millis = 20;
+int keytap_millis = 0;
+String clockwiseness = "clockwise";*/
 long timeToWait = 10;
 long lastTime;
 int throttle_lock = 0;
-float stabilisation_throttle = 0.65;
+float stabilisation_throttle = 0.60;
 
 LeapMotion leap;
 
@@ -32,7 +37,7 @@ void setup()
   size(800, 640, P3D);
   background(255);
   lights();
-  fill(50);
+ fill(50);
   //noFill();
   ellipseMode(CENTER);
   noStroke();
@@ -43,7 +48,7 @@ void setup()
   copter = new CopterModel((PApplet)this);
   visual = new CopterVisualisation(copter, 0, 490, 100);
   lastTime = millis();
-  leap = new LeapMotion(this).withGestures("key_tap, circle"); // leap detects key_tap and circle gestures, for a further use ( flips for circle gesture ? stabilisation or control on/off for key_tap gesture ?)
+  leap = new LeapMotion(this).withGestures("key_tap, circle"); //leap detects key_tap and circle gestures, for a further use ( flips for circle gesture ? stabilisation or control on/off for key_tap gesture ?)
 }
 boolean newframe=false;
 void draw()
@@ -87,7 +92,6 @@ void draw()
       int     touch_zone        = finger.getTouchZone();
       float   touch_distance    = finger.getTouchDistance();
       
-      //println("Finger id: "+finger_id);
       finger_detected = 1;
       switch(touch_zone) //touch zone declaration
       {
@@ -103,7 +107,7 @@ void draw()
         
       }
      } //end of for:fingers
-      if(etat == 1)//if control on
+     if(etat == 1)//if control on
       {
         if(mode == 1)//if leap mode
         {
@@ -153,7 +157,90 @@ void draw()
       }//end of if hand opened
       }//end of if leap mode
       }//end of if control on
-    
+ /*   if(etat == 1)
+    {
+      if(mode == 1)
+      {
+        if(stabilisation == 0)
+        {
+          if(keytap_millis > 0)
+          {
+            text("KeyTap", 700, 50);
+            keytap_millis -= 1;
+          }
+          if(flips_enabled == 1)
+          {
+          if(circle_gesture_flip != 0)//flipping experiments
+          {
+            if(clockwiseness == "clockwise") //start of clockwise condition
+            {
+            if (circle_millis >= 15)//clockwise flip step 1, lasts 0.23 seconds
+            {
+            circle_gesture_flip = 2;
+            text("Clockwise Flip step 1!", 50, 50);// Text on the upper left-hand corner
+            copter.throttle = (stabilisation_throttle+0.25);
+            copter.rudder = 0;
+            copter.elevator = 0;
+            copter.aileron = 1;//positive step 1 for a clockwise flip
+            circle_millis -= 1;//home-made millis
+            }
+            if (circle_millis > 0 && circle_millis < 15)//step 2 flip, lasts 0.5 seconds
+            {
+            text("Clockwise Flip step 2!", 50, 50);// Text on the upper left-hand corner
+            copter.throttle = stabilisation_throttle+0.25;
+            copter.rudder = 0;
+            copter.elevator = 0;
+            copter.aileron = -2;//negative step 2 for a clockwise flip
+            circle_millis -= 1;//home-made millis
+            }
+            if (circle_millis > -5 && circle_millis <= 0)//restabilisation, lasts 0,16 seconds
+            {
+            //copter.aileron = 0.1; //Adjustment after flip?
+            copter.throttle = stabilisation_throttle+1;//High throttle to restabilise
+            circle_millis -= 1;//home-made millis
+            }
+            if (circle_millis == -5)//end of flip
+            {
+            copter.aileron = 0;
+            circle_gesture_flip = 0;
+            }
+            } else { //end of clockwise condition, start of counter-clockwise condition
+            if (circle_millis >= 15)// anti-clockwise flip step 1, lasts 0.23 seconds
+            {
+            circle_gesture_flip = 2;
+            text("Anti-Clockwise Flip step 1!", 50, 50);
+            copter.throttle = stabilisation_throttle;
+            copter.rudder = 0;
+            copter.elevator = 0;
+            copter.aileron = -1;//negative step 1 for a counter-clockwise flip
+            circle_millis -= 1;//home-made millis
+            }
+            if (circle_millis > 0 && circle_millis < 15)//step 2 flip, lasts 0.5 seconds
+            {
+            text("Anti-Clockwise Flip step 2!", 50, 50);
+            copter.throttle = stabilisation_throttle+0.25;
+            copter.rudder = 0;
+            copter.elevator = 0;
+            copter.aileron = 2;//positive step 2 for a clockwise flip
+            circle_millis -= 1;//home-made millis
+            }
+            if (circle_millis > -5 && circle_millis <= 0)//restabilisation, lasts 0,16 seconds
+            {
+            //copter.aileron = -0.1; //Adjustment after flip?
+            copter.throttle = stabilisation_throttle+1; //High throttle to restabilise
+            circle_millis -= 1;//home-made millis
+            }
+            if (circle_millis == -5)//end of flip
+            {
+            copter.aileron = 0;
+            circle_gesture_flip = 0;
+            }
+            }
+          }
+         }
+        }
+      }
+    }//end of flipping */
   } //end of for:hand
       
       if(etat == 1) //if control on
@@ -282,7 +369,7 @@ void draw()
 
 }//end of void draw()
 
-  void leapOnKeyTapGesture(KeyTapGesture g){ //KeyTap Gesture Function
+/*void leapOnKeyTapGesture(KeyTapGesture g){ //KeyTap Gesture Function
   int       id               = g.getId();
   Finger    finger           = g.getFinger();
   PVector   position         = g.getPosition();
@@ -290,11 +377,13 @@ void draw()
   long      duration         = g.getDuration();
   float     duration_seconds = g.getDurationInSeconds();
   
-
+  
   if(etat == 1)//if control activated
   {
     if(mode == 1)//if mode Leap
     {
+      //if(position.y > 470) {
+        println("KeyTapGesture: "+position.y);
   switch(rudder_enabled){ //enables/disables rudder with keyTap
 
   case 0:
@@ -306,17 +395,17 @@ void draw()
   rudder_enabled = 0;
   println("Rudder control disabled");
   break;
- 
+ // }//end if position
   }//end if etat
   }//end if mode
   }//end of switch
- }//end of keytap
+ }//end of keytap*/
  
-  
-      void leapOnCircleGesture(CircleGesture g, int state){ //A function for the circle gesture, may be used to "flip" later on
+/*void leapOnCircleGesture(CircleGesture g, int state){ //A function for the circle gesture, may be used to "flip" later on
   int       id               = g.getId();
   Finger    finger           = g.getFinger();
   PVector   position_center  = g.getCenter();
+  PVector   position_normal  = g.getNormal();
   float     radius           = g.getRadius();
   float     progress         = g.getProgress();
   long      duration         = g.getDuration();
@@ -326,18 +415,43 @@ void draw()
     case 1: // Start
       break;
     case 2: // Update
+      circle_millis = 60;
       break;
     case 3: // Stop
-      println("CircleGesture: "+id);
+      //println("CircleGesture: "+id);
+      circle_gesture_flip = 1;
+      println(position_normal);
+      if(position_normal.z < 50)
+      {
+      clockwiseness = "counterclockwise";
+      } else {
+      clockwiseness = "clockwise";
+      }
+      println(clockwiseness);
       break;
       
   } //end of switch state
-    } //end of circle gesture
+    } //end of circle gesture*/
 
 //beginning of the keyboard control code section
 void keyPressed() {
   float stepSize=0.01;
   float stepSizekey=0.06;
+  /*if (key == '5')
+  {
+    switch(flips_enabled)//Turn on/off flips with circle gesture
+    {
+    case 0:
+    flips_enabled = 1;
+    println("Flips enabled");//Flips are in a very early stage of developpement, we recommend not to use them for now
+    break;
+    
+    case 1:
+    flips_enabled = 0;
+    println("Flips disabled");
+    break;
+    }
+  }*/
    if (key == '4')
   {
     switch(throttle_lock)

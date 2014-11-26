@@ -68,6 +68,11 @@ class CopterVisualisation {
     
     drawIndicator(posx+h/2, posy+h/2, h, copter.rudder, copter.throttle-1);
     drawIndicator(posx+4*h/2, posy+h/2, h, copter.aileron*2, copter.elevator*2);
+   /* if (flips_enabled == 0) {
+      text("Flip function inactive",posx+h*3,posy-15);
+    } else {
+      text("Flip function enabled",posx+h*3,posy-15);
+    }*/
     if (throttle_lock == 0) {
       text("Throttle : unlocked",posx+h*3,posy+05);
     } else {
