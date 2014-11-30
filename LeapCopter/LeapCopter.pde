@@ -29,6 +29,9 @@ long timeToWait = 10;
 long lastTime;
 int throttle_lock = 0;
 float stabilisation_throttle = 0.60;
+float stabilisation_tuning = 0.00;
+String[] stabilisation_tuning_loaded;
+String[] stabilisation_tuning_save;
 
 LeapMotion leap;
 
@@ -54,6 +57,37 @@ boolean newframe=false;
 void draw()
 {
   background(255);
+  String[] stabilisation_tuning_loaded = loadStrings("stabilisation_tuning.txt");
+  String stabilisation_tuning_joined = join(stabilisation_tuning_loaded, "");
+  stabilisation_tuning_joined = stabilisation_tuning_joined.replace(",","");
+  stabilisation_tuning = round(float(stabilisation_tuning_joined)*100)*0.01;//Rounding seems to reduce the amount of 0.049999997 type values caused by Processing's poor maths :)
+  text("Stabilisation Tuning : "+round(stabilisation_tuning*100), 300, 620);//We still get such values so it's rounded this time to an integer for text
+  /*if(stabilisation_tuning_joined.length() == 6) //Did all this for nothing apparently x)
+  {
+    char stab1 = stabilisation_tuning_joined.charAt(1);
+    //println("charat1 ",stab1);
+    char stab2 = stabilisation_tuning_joined.charAt(3);
+    //println("charat3 ",stab2);
+    char stab3 = stabilisation_tuning_joined.charAt(4);
+    //println("charat4 ",stab3);
+    stabilisation_tuning = -(int(stab1)-48) -((int(stab2)-48)*0.1) -((int(stab3)-48)*0.01);
+    fill(0,0,255);
+    text("Stabilisation Tuning : "+stabilisation_tuning, 300, 620);
+  }
+  else if(stabilisation_tuning_joined.length() == 5)
+  {
+    char stab1 = stabilisation_tuning_joined.charAt(0);
+    //println("charat0 ",stab1);
+    char stab2 = stabilisation_tuning_joined.charAt(2);
+    //println("charat2 ",stab2);
+    char stab3 = stabilisation_tuning_joined.charAt(3);
+    //println("charat3",stab3);
+    println(int(stab3));
+    stabilisation_tuning = (int(stab1)-48) +(int(stab2)-48)*0.1 +(int(stab3)-48)*0.01;
+    fill(0,0,255);
+    text("Stabilisation Tuning : "+stabilisation_tuning, 300, 620);
+  }*/
+  //println("loaded", stabilisation_tuning);
   int fps = leap.getFrameRate();
   visual.update();
   copter.sendData();
@@ -252,7 +286,7 @@ void draw()
           
           if (stabilisation == 1) //stabilisation code part
           {
-            copter.throttle=stabilisation_throttle;
+            copter.throttle=stabilisation_throttle+stabilisation_tuning;
             copter.elevator=0;
             copter.aileron=0;
             copter.rudder = 0;
@@ -266,7 +300,7 @@ void draw()
         {
           if (stabilisation == 1)//if stabilisation on
           {
-            copter.throttle = stabilisation_throttle;
+            copter.throttle = stabilisation_throttle+stabilisation_tuning;
             copter.elevator = 0;
             copter.aileron = 0;
             copter.rudder = 0;
@@ -611,4 +645,21 @@ if(etat !=2){//if control on
 }//end of if stab off
 }//end of if keyboard mode
 }  //end of if control on 
+if (etat !=2 && stabilisation == 1 && key == CODED){ //Stabilisation tuning, as the stabilisation throttle depends on your evironment
+  String stabilisation_tuning_string;
+  if (keyCode == UP){
+    println("up");
+    stabilisation_tuning = stabilisation_tuning+0.01;
+    stabilisation_tuning_string = str(stabilisation_tuning)+","; //added a comma to make a string array (to use saveStrings function)
+    stabilisation_tuning_save = split(stabilisation_tuning_string, " , ");
+    saveStrings("stabilisation_tuning.txt",stabilisation_tuning_save);
+  }
+  if (keyCode == DOWN){
+    println("down");
+    stabilisation_tuning = stabilisation_tuning-0.01;
+    stabilisation_tuning_string = str(stabilisation_tuning)+","; //added a comma to make a string array (to use saveStrings function)
+    stabilisation_tuning_save = split(stabilisation_tuning_string, " , ");
+    saveStrings("stabilisation_tuning.txt",stabilisation_tuning_save);
+  }
+} //end of stabilisation tuning
 } //end of void keyPressed function

@@ -11,7 +11,7 @@ Wiring are in the main.ino file.
 
 After a7105 is pulled on the arduino, just open the LeapCopter.pde file, click on the "run" button, THEN power on your quad.
 
-Controls : 0 to switch control on/off, 1 to switch between Leap mode and keyboard mode, 2 to switch stabilisation on/off, 3 to switch rudder control on/off, 4 to lock or unlock throttle.
+Controls : 0 to switch control on/off, 1 to switch between Leap mode and keyboard mode, 2 to switch stabilisation on/off, 3 to switch rudder control on/off, 4 to lock or unlock throttle. Also, while you're in stabilisation, control active, in either Leap or Keyboard mode, you can now tune the stabilisation throttle value with the up and down arrow keys.
 
 Keyboard mode : A = throttle up, Z = throttle down. Right, left, up and down keys to control aileron and elevator.
 
