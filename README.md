@@ -15,10 +15,10 @@ Controls : 0 to switch control on/off, 1 to switch between Leap mode and keyboar
 
 Keyboard mode : A = throttle up, Z = throttle down. Right, left, up and down keys to control aileron and elevator.
 
-Leap mode : incline your hand left/right/backwards/forwards to make the quad move left/right/backwards/forward. Turn your hand left/right to make the quad yaw left/right. Close your hand for self landing. Flips not included yet.
+Leap mode : incline your hand left/right/backwards/forwards to make the quad move left/right/backwards/forwards. Turn your hand left/right to make the quad yaw left/right. Close your hand for self landing. Flips not included yet.
 
 Gestures : move your hand in the "touch zone" of the leapmotion controller to enable rudder control of the quadcopter.
-Circle gesture is included in the code but doesn't do anything as of yet.
+Circle gesture is included in the code but doesn't do anything yet.
 
 Credits goes to PhracturedBlue, Shinyshez and andy_m for the arduino part.
 
